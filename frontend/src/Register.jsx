@@ -1,16 +1,28 @@
 import { useState } from "react";
 import axios from "axios";
-import { TextField, Button, Box, Typography, Container } from "@mui/material";
+import "./App.css"; 
+import {
+  TextField,
+  Button,
+  Typography,
+  IconButton,
+  InputAdornment,
+  MenuItem
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    if (!username || !password || !confirmPassword) {
+    if (!username || !password || !confirmPassword || !role) {
       alert("Please fill in all fields");
       return;
     }
@@ -21,72 +33,93 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/register", { username, password }, { headers: { "Content-Type": "application/json" } });
-
-      alert("Registration successful!");
+      const response = await axios.post("http://localhost:5000/register", {
+        username,
+        password,
+        role,
+      });
+      alert(response.data.message);
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Error during registration");
+      alert(error.response?.data?.message || "Registration Failed");
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh", // Full viewport height
-        backgroundColor: "#ADB2D4", // Green background
-        padding: 2,
-      }}
-    >
-      <Container maxWidth="xs" sx={{ padding: "2rem", backgroundColor: "#fff", borderRadius: "8px", boxShadow: 3 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+    <div className="page-wrapper">
+      <div className="form-container">
+        <Typography variant="h4" align="center" gutterBottom sx={{ color: "#1d2671" }}>
           Register
         </Typography>
+
         <TextField
           label="Username"
           fullWidth
           margin="normal"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
         />
+
         <TextField
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword((prev) => !prev)}>
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
+
         <TextField
           label="Confirm Password"
-          type="password"
+          type={showConfirmPassword ? "text" : "password"}
           fullWidth
           margin="normal"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          sx={{ marginBottom: "1rem" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowConfirmPassword((prev) => !prev)}>
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
+
+        <TextField
+          label="Role"
+          select
+          fullWidth
+          margin="normal"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <MenuItem value="Manager">Manager</MenuItem>
+          <MenuItem value="Employee">Employee</MenuItem>
+          <MenuItem value="Employee2">Employee2</MenuItem>
+        </TextField>
+
         <Button
           variant="contained"
           color="primary"
           fullWidth
+          sx={{ mt: 2 }}
           onClick={handleRegister}
-          sx={{
-            marginTop: "1rem",
-            padding: "0.75rem",
-            fontSize: "1rem",
-            fontWeight: "600",
-          }}
         >
           Register
         </Button>
-      </Container>
-    </Box>
+      </div>
+    </div>
   );
 };
 

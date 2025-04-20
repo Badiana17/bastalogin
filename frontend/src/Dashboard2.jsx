@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button } from "@mui/material";
 
-const Dashboard = () => {
+const Dashboard2 = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [userRole, setRole] = useState("");
@@ -15,8 +15,8 @@ const Dashboard = () => {
       setUser(storedUser);
       setRole(storedRole);
 
-      if (storedRole !== "Manager") {
-        navigate("/employee");
+      if (storedRole !== "Employee") {
+        navigate("/employee2");
       }
     } else {
       navigate("/login");
@@ -46,4 +46,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard2;
